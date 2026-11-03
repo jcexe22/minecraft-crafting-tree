@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Publish PinPoint Nations
 
 on:
   push:
@@ -15,26 +15,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install
-      - run: npm run build
-      - run: mkdir -p dist/pinpoint && cp pinpoint/index.html dist/pinpoint/index.html
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
-
   deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - id: deployment
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Prepare PinPoint Nations
+        shell: bash
+        run: |
+          mkdir -p public/pinpoint
+          cp pinpoint/index.html public/pinpoint/index.html
+          printf '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=./pinpoint/"></head><body><a href="./pinpoint/">Open PinPoint Nations</a></body></html>' > public/index.html
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+      - name: Deploy Pages
+        id: deployment
         uses: actions/deploy-pages@v4
