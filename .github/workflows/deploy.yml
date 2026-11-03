@@ -24,6 +24,7 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npm run build
+      - run: mkdir -p dist/pinpoint && cp pinpoint/index.html dist/pinpoint/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
